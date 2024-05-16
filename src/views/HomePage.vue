@@ -23,6 +23,15 @@
 
 <script setup lang="ts">
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
+import { onMounted } from 'vue';
+//import { defineComponent } from 'vue';
+import { EstimotePlugin} from 'estimotePlugin4';
+
+onMounted(async () => {
+  console.log("fribble");
+  let x = await EstimotePlugin.createManager();
+  console.log("after fribble x="+JSON.stringify(x));
+})
 </script>
 
 <style scoped>
