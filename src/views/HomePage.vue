@@ -22,16 +22,51 @@
 </template>
 
 <script setup lang="ts">
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, onIonViewDidEnter } from '@ionic/vue';
 import { onMounted } from 'vue';
 //import { defineComponent } from 'vue';
-import { EstimotePlugin} from 'estimotePlugin4';
+import { EstimotePlugin as EstimoteUWBPlugin } from 'estimotePlugin4';
+//import { sduwb as EstimoteUWBPlugin } from 'estimotePlugin4';
 
+var UWBManager:string ;
+var UWBListener:string 
+var device_list: string= "";
 onMounted(async () => {
+
+ // let permissions = await EstimotePlugin.requestPermissions();
+ // console.log("fribble permissions returned value ="+JSON.stringify(permissions))
   console.log("fribble");
-  let x = await EstimotePlugin.createManager();
-  console.log("after fribble x="+JSON.stringify(x));
+  //let x = await EstimoteUWBPlugin.createManager();
+
+  ////if (x.handle) {
+  EstimoteUWBPlugin.createManager().then(Manager_handle => {
+    console.log("after fribble x=" + JSON.stringify(Manager_handle));
+    if (Manager_handle) {
+      UWBManager = Manager_handle;
+      if (!UWBListener) {
+        EstimoteUWBPlugin.addListener('UWBInfo', (eventData:any) => UWBInfoHandler(eventData)).then((listenerHandle:any) => {
+          UWBListener = listenerHandle;
+          //this.LogIt("about to start scanning, inside handle=" + JSON.stringify(this.UWBManager))
+          console.log("fribble start scanning inside handler" + Manager_handle.handle)
+          EstimoteUWBPlugin.startScanning(UWBManager, true, device_list )
+   
+        })
+      } else {
+        //this.LogIt("about to start scanning, outside handle=" + JSON.stringify(this.UWBManager))
+        console.log("fribble start scanning outside handler" + Manager_handle.handle)
+        EstimoteUWBPlugin.startScanning(UWBManager, true, device_list )
+        //this.startNotifications()
+      }
+    }
+  })    
+  //console.log("fribble start scanning =" + x.handle)
+  //await EstimotePlugin.startScanning(x, true, "");
+  //}
 })
+function UWBInfoHandler(eventData:any) {
+  console.log("fribble uwb event data="+JSON.stringify(eventData))
+}
+
 </script>
 
 <style scoped>
