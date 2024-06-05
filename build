@@ -1,0 +1,21 @@
+platform=$(uname -s)
+if [ $platform == 'Darwin' ]; then 
+	os="ios"
+else
+	os="android"
+fi
+start=$SECONDS
+if [ ! -e dist ]; then 
+   mkdir dist
+   touch dist/index.html
+fi
+if [ $os == 'ios' ]; then 
+	cd ios/App
+	xcodebuild clean
+	cd -
+fi
+npx cap sync 
+ionic capacitor sync $os  
+end=$SECONDS
+duration=$(( end - start ))
+echo "build took $duration seconds to complete"
